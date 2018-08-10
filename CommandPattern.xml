@@ -1,0 +1,1825 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<command_patterns>
+<!-- Generic Key Management Commands -->
+    <command code='A0' direction='REQUEST' response_code='A1'>
+        <description>
+            To generate a key and optionally encrypt key under ZMK for transmission.
+        </description>
+        <element>
+            <name> Mode </name>
+            <note>
+                0 - Generate Key
+                1 - Generate Key and encrypted under ZMK
+            </note>
+            <encode> HEX </encode>
+            <size> 1 </size>
+        </element>
+        <element>
+            <name> KeyType </name>
+            <encode> HEX </encode>
+            <size> 3 </size>
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+        </element>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+            <present_condition element='Mode' type='OnValue'>
+                <value> 1 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='Mode' type='OnValue'>
+                <value> 1 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter='' > -1 </size>
+        </element>
+    </command>
+    <command code='A1' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> KeyUnderLMK </name>
+            <note>
+                Key encrypted under the LMK
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> KeyUnderZMK </name>
+            <note>
+                Key encrypted under the ZMK
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='A6' direction='REQUEST' response_code='A7'>
+        <description>
+            To import a key encrypted under a ZMK.
+        </description>
+        <element>
+            <name> KeyType </name>
+            <encode> HEX </encode>
+            <size> 3 </size>
+        </element>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> Key </name>
+            <note>
+                Key encrypted under the ZMK
+            </note>
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter='' > -1 </size>
+        </element>
+    </command>
+    <command code='A7' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> Key </name>
+            <note>
+                Translated Key, encrypted under the LMK
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='A8' direction='REQUEST' response_code='A9'>
+        <description>
+            To encrypt a key under a ZMK for export.
+        </description>
+        <element>
+            <name> KeyType </name>
+            <encode> HEX </encode>
+            <size> 3 </size>
+        </element>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> Key </name>
+            <note>
+                ZPK encrypted under LMK
+            </note>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter='' > -1 </size>
+        </element>
+    </command>
+    <command code='A9' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> Key </name>
+            <note>
+                Translated Key, encrypted under the ZMK
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+<!-- Zone Master Key Management -->
+    <!-- hasn't implemented yet. -->
+<!-- Zone PIN Key Management -->
+    <command code='IA' direction='REQUEST' response_code='IB'>
+        <description>
+            Generate a random PIN key and return it to the Host encrypted under a ZMK
+            for transmission to another party and under the LMK for storage on the Host
+            database.
+        </description>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='IB' direction='RESPONSE'>
+        <element type='KEY' >
+            <name> ZPKUnderZMK </name>
+            <note>
+                ZPK encrypted under the ZMK
+            </note>
+        </element>
+        <element type='KEY'>
+            <name> ZPKUnderLMK </name>
+            <note>
+                ZPK encrypted under the LMK pair 06-07
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='FA' direction='REQUEST' response_code='FB'>
+        <description>
+            Translate a ZPK from encryption under a ZMK to encryption under the LMK.
+            Used to receive a ZPK from another party.
+        </description>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> ZPK </name>
+            <note>
+                ZPK encrypted under the ZMK
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='FB' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> ZPK </name>
+            <note>
+                Translated ZPK, encrypted under the LMK pair 06-07
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='GC' direction='REQUEST' response_code='GD'>
+        <description>
+            Translate a ZPK from encryption under the LMK to encryption under a ZMK.
+            Used to transmit a ZPK to another party.
+        </description>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> ZPK </name>
+            <note>
+                ZPK encrypted under LMK pair 06-07
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='GD' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> ZPK </name>
+            <note>
+                Translated ZPK, encrypted under the ZMK
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+<!-- Zone Encryption, Zone Authentication Key Management -->
+    <command code='FI' direction='REQUEST' response_code='FJ'>
+        <description>
+            Generate a ZEK or ZAK.
+        </description>
+        <element>
+            <name> Flag </name>
+            <note>
+                0 for ZEK, 1 for ZAK
+            </note>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='FJ' direction='RESPONSE'>
+        <element type='KEY' >
+            <name> ZEKZAKUnderZMK </name>
+            <note>
+                ZEK/ZAK encrypted under the ZMK
+            </note>
+        </element>
+        <element type='KEY'>
+            <name> ZEKZAKUnderLMK </name>
+            <note>
+                ZEK encrypted under the LMK pair 30-31 or
+                ZAK encrypted under the LMK pair 26-27
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='FK' direction='REQUEST' response_code='FL'>
+        <description>
+            Translate a ZEK or ZAK from ZMK to LMK.
+        </description>
+        <element>
+            <name> Flag </name>
+            <note>
+                0 for ZEK, 1 for ZAK
+            </note>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY'>
+            <name> ZEKZAK </name>
+            <note>
+                ZEK/ZAK encrypted under the ZMK
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='FL' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> ZEKZAKUnderLMK </name>
+            <note>
+                Translated ZEK encrypted under the LMK pair 30-31 or
+                Translated ZAK encrypted under the LMK pair 26-27
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='FM' direction='REQUEST' response_code='FN'>
+        <description>
+            Translate a ZEK or ZAK from LMK to ZMK.
+        </description>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY'>
+            <name> ZEKZAK </name>
+            <note>
+                ZEK encrypted under the LMK pair 30-31 or
+                ZAK encrypted under the LMK pair 26-27
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='FN' direction='RESPONSE'>
+        <element type='KEY' >
+            <name> ZEKZAKUnderZMK </name>
+            <note>
+                Translated ZEK/ZAK encrypted under the ZMK
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+<!-- Terminal Master, Terminal PIN and PIN Verification KEY Management -->
+    <command code='FG' direction='REQUEST' response_code='FH'>
+        <description>
+            Generate two random keys and return them each encrypted under LMK pair
+            14-15 and under a ZMK.
+        </description>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='FH' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> PVKUnderLMK </name>
+            <note>
+                ZPK encrypted under the LMK pair 14-15
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> PVKUnderZMK </name>
+            <note>
+                ZPK encrypted under the ZMK
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='FC' direction='REQUEST' response_code='FD'>
+        <description>
+            Translate a TMK, TPK or PVK from encryption under a ZMK to encryption
+            under the LMK.
+        </description>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> TMK_TPK_PVK </name>
+            <note>
+                ZPK encrypted under the ZMK
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='FD' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> TMK_TPK_PVK </name>
+            <note>
+                Translated ZPK, encrypted under the LMK pair 14-15
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='FE' direction='REQUEST' response_code='FF'>
+        <description>
+            Translate a TMK, TPK or PVK from encryption under the LMK to encryption
+            under a ZMK.
+        </description>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> TMK_TPK_PVK </name>
+            <note>
+                TMK/TPK/PVK encrypted under LMK pair 14-15
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='FF' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> TMK_TPK_PVK </name>
+            <note>
+                Translated TMK/TPK/PVK, encrypted under the ZMK
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+<!-- Terminal Authentication Key Management -->
+    <command code='HA' direction='REQUEST' response_code='HB'>
+        <description>
+            Generate a random key, and encrypt it under a TMK (TPK or PVK) and under
+            LMK pair 16-17.
+        </description>
+        <element type='KEY'>
+            <name> TMK </name>
+            <note>
+                The TMK encrypted under LMK pair 14-15.
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeTMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='HB' direction='RESPONSE'>
+        <element type='KEY' >
+            <name> TAKUnderTMK </name>
+            <note>
+                ZPK encrypted under the TMK
+            </note>
+        </element>
+        <element type='KEY'>
+            <name> TAKUnderLMK </name>
+            <note>
+                TAK encrypted under the LMK pair 16-17
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='MI' direction='REQUEST' response_code='MJ'>
+        <description>
+            Translate a TAK from encryption under a ZMK to encryption under the LMK.
+            Used to receive a key from another party.
+        </description>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> TAK </name>
+            <note>
+                TAK encrypted under the ZMK
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='MJ' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> TAK </name>
+            <note>
+                Translated TAK, encrypted under the LMK pair 16-17
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='MG' direction='REQUEST' response_code='MH'>
+        <description>
+            Translate a TAK from encryption under the LMK to encryption under a ZMK.
+            Used to send a key to another party.
+        </description>
+        <element type='ZMK'>
+            <name> ZMK </name>
+            <note>
+                The ZMK encrypted under LMK pair 04-05.
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> TAK </name>
+            <note>
+                TAK encrypted under LMK pair 16-17
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeZMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='MH' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> TAK </name>
+            <note>
+                Translated TAK, encrypted under the ZMK
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+    <command code='AG' direction='REQUEST' response_code='AH'>
+        <description>
+            Translate a TAK from encryption under the LMK to encryption under a TMK.
+            Used to send a key to a terminal.
+        </description>
+        <element type='KEY'>
+            <name> TMK </name>
+            <note>
+                The TMK encrypted under LMK pair 14-15.
+            </note>
+        </element>
+        <element type='KEY' >
+            <name> TAK </name>
+            <note>
+                TAK encrypted under LMK pair 16-17
+            </note>
+        </element>
+        <element>
+            <name> AtallaVariant </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> KeySchemeTMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeySchemeLMK </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+        <element>
+            <name> KeyCheckValueType </name>
+            <encode> ASCII </encode>
+            <size> 1 </size>
+            <present_condition element='AtallaVariant' type='OnNotNull' />
+        </element>
+    </command>
+    <command code='AH' direction='RESPONSE'>
+        <element type='KEY'>
+            <name> TAK </name>
+            <note>
+                Translated TAK, encrypted under the TMK
+            </note>
+        </element>
+        <element type='CHECKVALUE' >
+            <name> CheckValue </name>
+        </element>
+    </command>
+
+<!-- PIN and Offset Generation -->
+    <command code='EE' direction='REQUEST' response_code='EF'>
+        <description>
+            Generate a 4 to 12-digit PIN using the IBM method
+        </description>
+        <element type='KEY'>
+            <name> PVK </name>
+        </element>
+        <element>
+            <name> Offset </name>
+            <encode> HEX </encode>
+            <size> 12 </size>
+        </element>
+        <element>
+            <name> CheckLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+        <element>
+            <name> DecimalizationTable </name>
+            <encode> NUMBER </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> PINValidationData </name>
+            <encode> ASCII </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+    <command code='EF' direction='RESPONSE'>
+        <element type='PIN'>
+            <name> PIN </name>
+        </element>
+    </command>
+
+    <command code='DE' direction='REQUEST' response_code='DF'>
+        <description>
+            Generate a PIN offset using the IBM method.
+        </description>
+        <element type='KEY'>
+            <name> PVK </name>
+        </element>
+        <element type='PIN' >
+            <name> PIN </name>
+        </element>
+        <element>
+            <name> CheckLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+        <element>
+            <name> DecimalizationTable </name>
+            <encode> NUMBER </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> PINValidationData </name>
+            <encode> ASCII </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+    <command code='DF' direction='RESPONSE'>
+        <element>
+            <name> Offset </name>
+            <encode> HEX </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+
+<!-- PIN Verification -->
+    <command code='DA' direction='REQUEST' response_code='DB'>
+        <description>
+            Verify a PIN from a local ATM (or PIN pad etc.) using the IBM 3624 method.
+        </description>
+        <element type='KEY'>
+            <name> TPK </name>
+        </element>
+        <element type='KEY'>
+            <name> PVK </name>
+        </element>
+        <element>
+            <name> MaxPINLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> PINBlock </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> PINBlockFormatCode </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> CheckLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+        <element>
+            <name> DecimalizationTable </name>
+            <encode> NUMBER </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> PINValidationData </name>
+            <encode> ASCII </encode>
+            <size> 12 </size>
+        </element>
+        <element>
+            <name> Offset </name>
+            <encode> HEX </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+    <command code='DB' direction='RESPONSE'>
+    </command>
+
+    <command code='EA' direction='REQUEST' response_code='EB'>
+        <description>
+            Verify a PIN from interchange using the IBM 3624 method.
+        </description>
+        <element type='KEY'>
+            <name> ZPK </name>
+        </element>
+        <element type='KEY'>
+            <name> PVK </name>
+        </element>
+        <element>
+            <name> MaxPINLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> PINBlock </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> PINBlockFormatCode </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> CheckLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+        <element>
+            <name> DecimalizationTable </name>
+            <encode> NUMBER </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> PINValidationData </name>
+            <encode> ASCII </encode>
+            <size> 12 </size>
+        </element>
+        <element>
+            <name> Offset </name>
+            <encode> HEX </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+    <command code='EB' direction='RESPONSE'>
+    </command>
+
+<!-- PIN Translation -->
+    <command code='CC' direction='REQUEST' response_code='CD'>
+        <description>
+            Translate a PIN block from encryption under one ZPK to encryption under
+            another ZPK and from one format to another. If the same ZPK is defined, only
+            the PIN block is translated, and if the same PIN block format is defined, only
+            the key is translated.
+        </description>
+        <element type='KEY'>
+            <name> SourceZPK </name>
+        </element>
+        <element type='KEY'>
+            <name> DestinationZPK </name>
+        </element>
+        <element>
+            <name> MaximumPINLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> SourcePINBlock </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> SourcePINBlockFormat </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> DestinationPINBlockFormat </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+    <command code='CD' direction='RESPONSE'>
+        <element>
+            <name> PINLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> DestinationPINBlock </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> DestinationPINBlockFormat </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+    </command>
+
+    <command code='CA' direction='REQUEST' response_code='CB'>
+        <description>
+            Translate a PIN block from encryption under a TPK to encryption under a ZPK
+            and from one format to another. If the same PIN block format is defined, only
+            the key is translated.
+        </description>
+        <element type='KEY'>
+            <name> SourceTPK </name>
+        </element>
+        <element type='KEY'>
+            <name> DestinationZPK </name>
+        </element>
+        <element>
+            <name> MaximumPINLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> SourcePINBlock </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> SourcePINBlockFormat </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> DestinationPINBlockFormat </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+    <command code='CB' direction='RESPONSE'>
+        <element>
+            <name> PINLength </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> DestinationPINBlock </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> DestinationPINBlockFormat </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+    </command>
+
+    <command code='JE' direction='REQUEST' response_code='JF'>
+        <description>
+            Translate a PIN from encryption under a ZPK to encryption under the LMK.
+        </description>
+        <element type='KEY'>
+            <name> ZPK </name>
+        </element>
+        <element>
+            <name> PINBlock </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> PINBlockFormatCode </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+    <command code='JF' direction='RESPONSE'>
+        <element type='PIN' >
+            <name> PIN </name>
+        </element>
+    </command>
+
+    <command code='JC' direction='REQUEST' response_code='JD'>
+        <description>
+            Translate a PIN from encryption under a TPK to encryption under the LMK.
+        </description>
+        <element type='KEY'>
+            <name> TPK </name>
+        </element>
+        <element>
+            <name> PINBlock </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+        <element>
+            <name> PINBlockFormatCode </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+    <command code='JD' direction='RESPONSE'>
+        <element type='PIN' >
+            <name> PIN </name>
+        </element>
+    </command>
+
+    <command code='JG' direction='REQUEST' response_code='JH'>
+        <description>
+            Translate a PIN from encryption under the LMK to encryption under a ZPK.
+        </description>
+        <element type='KEY'>
+            <name> ZPK </name>
+        </element>
+        <element>
+            <name> PINBlockFormatCode </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+        <element type='PIN' >
+            <name> PIN </name>
+        </element>
+    </command>
+    <command code='JH' direction='RESPONSE'>
+        <element>
+            <name> PINBlock </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+    </command>
+
+<!-- PIN Mailer Printing -->
+<!-- PIN Solicitation Data Processing -->
+<!-- Clear PIN Support -->
+    <command code='NG' direction='REQUEST' response_code='NH'>
+        <description>
+            Decrypted an encrypted PIN and return a reference number
+        </description>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+        <element type='PIN' >
+            <name> PIN </name>
+        </element>
+    </command>
+    <command code='NH' direction='RESPONSE'>
+        <element type='PIN' >
+            <name> PIN </name>
+        </element>
+    </command>
+
+    <command code='BA' direction='REQUEST' response_code='BB'>
+        <description>
+            Encrypt a clear text PIN.
+        </description>
+        <element type='PIN' >
+            <name> PIN </name>
+        </element>
+        <element>
+            <name> AccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+        </element>
+    </command>
+    <command code='BB' direction='RESPONSE'>
+        <element type='PIN' >
+            <name> PIN </name>
+        </element>
+    </command>
+
+<!-- Host Watchword Support -->
+    <!-- hasn't implemented yet -->
+<!-- Message Authentication Code Support -->
+    <command code='MA' direction='REQUEST' response_code='MB'>
+        <description>
+            Generate a MAC on given data.
+        </description>
+        <element type='KEY'>
+            <name> TAK </name>
+        </element>
+        <element>
+            <name> Data </name>
+            <encode> HEX </encode>
+            <size delimiter='' > -1 </size>
+        </element>
+    </command>
+    <command code='MB' direction='RESPONSE'>
+        <element>
+            <name> MAC </name>
+            <encode> HEX </encode>
+            <size> 8 </size>
+        </element>
+    </command>
+
+    <command code='MC' direction='REQUEST' response_code='MD'>
+        <description>
+            Verify a MAC.
+        </description>
+        <element type='KEY'>
+            <name> TAK </name>
+            <note>
+                TAK under LMK pair 26-27
+            </note>
+        </element>
+        <element>
+            <name> MAC </name>
+            <encode> HEX </encode>
+            <size> 8 </size>
+        </element>
+        <element>
+            <name> Data </name>
+            <encode> HEX </encode>
+            <size delimiter='' > -1 </size>
+        </element>
+    </command>
+    <command code='MD' direction='RESPONSE'>
+    </command>
+
+    <command code='ME' direction='REQUEST' response_code='MF'>
+        <description>
+            Verify a MAC and, if successful, generate a MAC on the same data with adifferent key.
+        </description>
+        <element type='KEY'>
+            <name> SourceTAK </name>
+            <note>
+                Source TAK under LMK pair 26-27
+            </note>
+        </element>
+        <element type='KEY'>
+            <name> DestinationTAK </name>
+            <note>
+                Destination TAK under LMK pair 26-27
+            </note>
+        </element>
+        <element>
+            <name> MAC </name>
+            <encode> HEX </encode>
+            <size> 8 </size>
+        </element>
+        <element>
+            <name> Data </name>
+            <encode> HEX </encode>
+            <size delimiter='' > -1 </size>
+        </element>
+    </command>
+    <command code='MF' direction='RESPONSE'>
+        <element>
+            <name> MAC </name>
+            <encode> HEX </encode>
+            <size> 8 </size>
+        </element>
+    </command>
+
+    <command code='MQ' direction='REQUEST' response_code='MR'>
+        <description>
+            Generate a MAC (MAB) for a large message.
+        </description>
+        <element>
+            <name> MessageBlockNumber </name>
+            <note>
+                0 - Only Block
+                1 - Fist Block
+                2 - A Middle Block
+                3 - Last Block
+            </note>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element type='KEY'>
+            <name> TAK </name>
+            <note>
+                TAK under LMK pair 26-27
+            </note>
+        </element>
+        <element>
+            <name> IV </name>
+            <note>
+                Initialization value, present only when message block number is 2 or 3.
+            </note>
+            <encode> HEX </encode>
+            <size> 16 </size>
+            <present_condition element='MessageBlockNumber' type='OnValue' >
+                <value> 2 </value>
+                <value> 3 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> MessageLength </name>
+            <encode> NUMBER </encode>
+            <size> 3 </size>
+        </element>
+        <element>
+            <name> MessageBlock </name>
+            <encode> HEX </encode>
+            <size length_element='MessageLength' > -1 </size>
+        </element>
+    </command>
+    <command code='MR' direction='RESPONSE'>
+        <element>
+            <name> MAB </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+    </command>
+
+    <command code='MS' direction='REQUEST' response_code='MT'>
+        <description>
+            To generate a MAB for a large message using either a TAK or a ZAK.
+            If the key is single length use ANSI X9.9 MAC generation or if the key is double
+            length use ANSI X9.19 MAC generation.
+        </description>
+        <element>
+            <name> MessageBlockNumber </name>
+            <note>
+                0 - Only Block
+                1 - Fist Block
+                2 - A Middle Block
+                3 - Last Block
+            </note>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element>
+            <name> KeyType </name>
+            <note>
+                0 - TAK(Terminal Authentication Key)
+                1 - ZAK(Zone Authentication Key)
+            </note>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element>
+            <name> KeyLength </name>
+            <note>
+                0 - Single Length DES Key
+                1 - Double Length Des Key
+            </note>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element>
+            <name> MessageType </name>
+            <note>
+                0 - Message data is binary
+                1 - Message data is Hex
+            </note>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element type='KEY'>
+            <name> Key </name>
+            <note>
+                TAK under LMK pair 16-17
+                ZAK under LMK pair 26-27
+            </note>
+        </element>
+        <element>
+            <name> IV </name>
+            <note>
+                Initialization value, present only when message block number is 2 or 3.
+            </note>
+            <encode> HEX </encode>
+            <size> 16 </size>
+            <present_condition element='MessageBlockNumber' type='OnValue' >
+                <value> 2 </value>
+                <value> 3 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> MessageLength </name>
+            <encode> NUMBER </encode>
+            <size> 4 </size>
+        </element>
+        <element>
+            <name> MessageBlock </name>
+            <encode> HEX </encode>
+            <size length_element='MessageLength' > -1 </size>
+        </element>
+    </command>
+    <command code='MT' direction='RESPONSE'>
+        <element>
+            <name> MAB </name>
+            <encode> HEX </encode>
+            <size> 16 </size>
+        </element>
+    </command>
+
+<!-- Base24 Binary MAC Commands -->
+    <!-- hasn't implemented yet -->
+<!-- User Storage Support -->
+    <!-- hasn't implemented yet -->
+<!-- Print Output Formation -->
+    <!-- hasn't implemented yet -->
+<!-- Translate Data After Change Of Local Master Key -->
+    <!-- hasn't implemented yet -->
+<!-- Miscellaneous Commands -->
+    <!-- hasn't implemented yet -->
+<!-- VISA Card Verification Values -->
+    <command code='CW' direction='REQUEST' response_code='CX'>
+        <description>
+            Generate a VISA CVV for encoding a card
+        </description>
+        <element type='CVK'>
+            <name> CVK_AB </name>
+        </element>
+        <element>
+            <name> PrimaryAccountNumber </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> ExpirationDate </name>
+            <encode> NUMBER </encode>
+            <size> 4 </size>
+        </element>
+        <element>
+            <name> ServiceCode </name>
+            <encode> NUMBER </encode>
+            <size> 3 </size>
+        </element>
+    </command>
+    <command code='CX' direction='RESPONSE'>
+        <element>
+            <name> CVV </name>
+            <encode> NUMBER </encode>
+            <size> 3 </size>
+        </element>
+    </command>
+
+    <command code='CY' direction='REQUEST' response_code='CZ'>
+        <description>
+            Generate a VISA CVV for encoding a card
+        </description>
+        <element type='CVK'>
+            <name> CVK_AB </name>
+        </element>
+        <element>
+            <name> CVV </name>
+            <encode> NUMBER </encode>
+            <size> 3 </size>
+        </element>
+        <element>
+            <name> PrimaryAccountNumber </name>
+            <encode> NUMBER </encode>
+            <size delimiter=';' > -1 </size>
+        </element>
+        <element>
+            <name> ExpirationDate </name>
+            <encode> NUMBER </encode>
+            <size> 4 </size>
+        </element>
+        <element>
+            <name> ServiceCode </name>
+            <encode> NUMBER </encode>
+            <size> 3 </size>
+        </element>
+    </command>
+    <command code='CZ' direction='RESPONSE'>
+    </command>
+
+<!-- VISA Cash System -->
+    <!-- hasn't implemented yet -->
+<!-- Chip Card -->
+    <!-- hasn't implemented yet -->
+<!-- American Express Card Security Code -->
+    <!-- hasn't implemented yet -->
+<!-- Racal Transaction Key Scheme(RTKS) -->
+    <!-- hasn't implemented yet -->
+<!-- Derived Unique Key Per Transaction(DUKPT) -->
+    <!-- hasn't implemented yet -->
+<!-- Australian Transaction Key Scheme(ATKS) -->
+    <!-- hasn't implemented yet -->
+<!-- Using The Optional RSA Cryptosystem -->
+    <!-- hasn't implemented yet -->
+
+    <command code='KQ' direction='REQUEST' response_code='KR'>
+        <description>
+            ARQC (or TC/AAC) Verification and ARPC Generation
+        </description>
+        <element>
+            <name> ModeFlag </name>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element>
+            <name> SchemeID </name>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element type='CVK'>
+            <name> MK_AC </name>
+        </element>
+        <element>
+            <name> PAN </name>
+            <encode> BINARY </encode>
+            <size> 8 </size>
+        </element>
+        <element>
+            <name> ATC </name>
+            <encode> BINARY </encode>
+            <size> 2 </size>
+        </element>
+        <element>
+            <name> UN </name>
+            <encode> BINARY </encode>
+            <size> 4 </size>
+        </element>
+        <element>
+            <name> TransactionDataLength </name>
+            <encode> HEX </encode>
+            <size> 2 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 0 </value>
+                <value> 1 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> TransactionData </name>
+            <encode> BINARY </encode>
+            <size delimiter=';'> -1 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 0 </value>
+                <value> 1 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> ARQC </name>
+            <encode> BINARY </encode>
+            <size> 8 </size>
+        </element>
+        <element>
+            <name> ARC </name>
+            <encode> BINARY </encode>
+            <size> 2 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 1 </value>
+                <value> 2 </value>
+            </present_condition>
+        </element>
+    </command>
+    <command code='KR' direction='RESPONSE'>
+        <element>
+            <name> ARPC </name>
+            <encode> BINARY </encode>
+            <size> 8 </size>
+        </element>
+    </command>
+    <command code='KU' direction='REQUEST' response_code='KV'>
+        <description>
+            Generate Secure Message with integrity and optinal Confidentiality and PIN Change
+        </description>
+        <element>
+            <name> ModeFlag </name>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element>
+            <name> SchemeID </name>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+        </element>
+        <element type='CVK'>
+            <name> MK_SMI </name>
+        </element>
+        <element>
+            <name> PAN </name>
+            <encode> BINARY </encode>
+            <size> 8 </size>
+        </element>
+        <element>
+            <name> IntegritySessionData </name>
+            <encode> BINARY </encode>
+            <size> 8 </size>
+        </element>
+        <element>
+            <name> PlainDataLength </name>
+            <encode> HEX </encode>
+            <size> 4 </size>
+        </element>
+        <element>
+            <name> PlainData </name>
+            <encode> BINARY </encode>
+            <size delimiter=';'> -1 </size>
+        </element>
+        <element type='CVK'>
+            <name> MK_SMC </name>
+        </element>
+        <element type='CVK'>
+            <name> TK </name>
+        </element>
+        <element>
+            <name> ConfidentialData </name>
+            <encode> BINARY </encode>
+            <size> 8 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 1 </value>
+                <value> 2 </value>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> Offset </name>
+            <encode> HEX </encode>
+            <size> 4 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 1 </value>
+                <value> 2 </value>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> CipherDataLength </name>
+            <encode> HEX </encode>
+            <size> 4 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 1 </value>
+                <value> 2 </value>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> CipherData </name>
+            <encode> BINARY </encode>
+            <size delimiter=';'> -1 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 1 </value>
+                <value> 2 </value>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> SourcePINEncryptionKeyType </name>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+        <element type='KEY'>
+            <name> SourcePINEncryptionKey </name>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> SourcePINBlockFormat </name>
+            <encode> NUMBER </encode>
+            <size> 2 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> DestinationPINBlockFormat </name>
+            <encode> NUMBER </encode>
+            <size> 1 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+        <element>
+            <name> PrimaryAccountNumber </name>
+            <encode> NUMBER </encode>
+            <size> 12 </size>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+        <element type='CVK'>
+            <name> MK_AC </name>
+            <present_condition element='ModeFlag' type='OnValue'>
+                <value> 3 </value>
+                <value> 4 </value>
+            </present_condition>
+        </element>
+    </command>
+    <command code='KV' direction='RESPONSE'>
+        <element>
+            <name> MAC </name>
+            <encode> BINARY </encode>
+            <size> 8 </size>
+        </element>
+    </command>
+
+
+
+
+
+</command_patterns>

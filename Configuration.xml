@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<configuration>
+	<description>
+		HSM configuration
+	</description>
+
+	<element type="int">
+		<name> PIN_LENGTH </name>
+		<value> 7 </value>
+	</element>
+	<element>
+		<name> ELEMENT_DELIMITER </name>
+		<value> ; </value>
+	</element>
+	<element type="int">
+		<name> KCV_LENGTH </name>
+		<value> 16 </value>
+	</element>
+	<element type="int">
+		<name> MESSAGE_HEADER_LENGTH </name>
+		<value> 4 </value>
+	</element>
+	<element type="int">
+		<name> KEY_LENGTH </name>
+		<value> 16 </value>
+	</element>
+	<element type="int">
+		<name> CVK_LENGTH </name>
+		<value> 32 </value>
+	</element>
+	<element type="int">
+		<name> MESSAGE_TRAILER_LENGTH </name>
+		<value> 32 </value>
+	</element>
+	<element type="int">
+		<name> ZMK_LENGTH </name>
+		<value> 16 </value>
+	</element>
+	<element type="int">
+	    <name> COMMUNICATION_PORT </name>
+	    <value> 8888 </value>
+	</element>
+	<element>
+	    <name> PIN_VALIDATION_DATA </name>
+	    <value> LAST5 </value>
+	</element>
+</configuration>
