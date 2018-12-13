@@ -76,7 +76,8 @@ def encryptPINUnderLMK(PIN, acctno):
     return cypherPIN
 
 def genPINUsingIBMMetheod(PVK, AccountNumber, PINValidationData, DecimalizationTable):
-    print AccountNumber,PINValidationData,DecimalizationTable
+    print "AccountNumber=",AccountNumber,"PINValidationData=",PINValidationData,"DecimalizationTable=",DecimalizationTable
+    print "clear PVK=",hexlify(PVK)
     if (len(PVK) == 8):
         key = pyDes.des(PVK)
     else:
